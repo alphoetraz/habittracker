@@ -178,7 +178,9 @@
     
     <div class="add-habit-form">
         <input type="text" id="habitInput" placeholder="Enter new habit...">
-        <button id="addHabitBtn">Add</button>
+        <input type="time" id="startTime" placeholder="Start Time">
+        <input type="number" id="duration" placeholder="Duration (minutes)" min="1"> 
+       <button id="addHabitBtn">Add</button>
     </div>
     
     <div class="habits-container" id="habitsContainer">
@@ -221,25 +223,35 @@
         // Add a new habit
         function addHabit() {
             const habitName = habitInput.value.trim();
-            
-            if (habitName === '') {
-                alert('Please enter a habit name');
+            const startTime = document.getElementById('startTime').value;
+            const duration = parseInt(document.getElementById('duration').value, 10);    
+            if (habitName === '' || startTime === '' || isNaN(duration) || duration <= 0) {
+                alert('Please enter habit name, start time, and a valid duration.');
                 return;
             }
-            
-            const today = getTodayString();
+
+    // Bitiş saatini hesapla
+            const [startHour, startMinute] = startTime.split(':').map(Number);
+            const endMinute = startMinute + duration;
+            const endHour = startHour + Math.floor(endMinute / 60);
+            const finalEndMinute = endMinute % 60;
+            const endTime = `${String(endHour).padStart(2, '0')}:${String(finalEndMinute).padStart(2, '0')}`;
             
             const newHabit = {
                 id: Date.now(),
                 text: habitName,
                 completed: false,
-                createdAt: today
+                startTime: startTime,
+                endTime: endTime,
+                createdAt: getTodayString()
             };
             
             habits.push(newHabit);
             saveHabits();
             renderHabits();
             habitInput.value = '';
+            document.getElementById('startTime').value = '';
+            document.getElementById('duration').value = '';
         }
         
         // Toggle habit completion
@@ -289,8 +301,8 @@
                 habitItem.innerHTML = `
                     <div class="habit-left">
                         <input type="checkbox" class="checkbox" ${habit.completed ? 'checked' : ''} 
-                               onclick="toggleHabit(${habit.id})">
-                        <span class="habit-text">${habit.text}</span>
+                            onclick="toggleHabit(${habit.id})">
+                        <span class="habit-text">${habit.text} (${habit.startTime} - ${habit.endTime})</span>
                     </div>
                     <button class="delete-btn" onclick="deleteHabit(${habit.id})">❌</button>
                 `;
