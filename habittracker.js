@@ -9,6 +9,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalHabitsValue = document.getElementById("totalHabitsValue");
     const completedTodayValue = document.getElementById("completedTodayValue");
 
+    // Set default time to current hour
+    const setDefaultTime = () => {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        startTimeInput.value = `${hours}:${minutes}`;
+    };
+    setDefaultTime();
+
     function addHabit() {
         const habitName = habitInput.value.trim();
         const startTime = startTimeInput.value;
@@ -19,37 +28,51 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const [startHour, startMinute] = startTime.split(":" ).map(Number);
+        const [startHour, startMinute] = startTime.split(":").map(Number);
         const endMinute = startMinute + duration;
         const endHour = startHour + Math.floor(endMinute / 60);
         const finalEndMinute = endMinute % 60;
         const endTime = `${String(endHour % 24).padStart(2, "0")}:${String(finalEndMinute).padStart(2, "0")}`;
 
+        const today = new Date().toISOString().split('T')[0];
         const newHabit = {
             id: Date.now(),
             text: habitName,
             completed: false,
             startTime,
             endTime,
-            dateCreated: new Date().toISOString().split('T')[0]
+            dateCreated: today
         };
 
         habits.push(newHabit);
         saveHabits();
         renderHabits();
         updateStats();
+        resetForm();
+    }
+
+    function resetForm() {
         habitInput.value = "";
-        startTimeInput.value = "";
         durationInput.value = "";
+        setDefaultTime();
+        habitInput.focus();
     }
 
     function renderHabits() {
         if (habits.length === 0) {
-            habitsContainer.innerHTML = noHabitsMsg.outerHTML;
+            habitsContainer.innerHTML = `<p class="no-habits" id="noHabitsMsg">No habits added yet. Add a habit to get started!</p>`;
             return;
         }
         
-        habits.sort((a, b) => a.startTime.localeCompare(b.startTime));
+        // Sort habits by start time and completion status
+        habits.sort((a, b) => {
+            // Show incomplete habits first
+            if (a.completed !== b.completed) {
+                return a.completed ? 1 : -1;
+            }
+            // Then sort by start time
+            return a.startTime.localeCompare(b.startTime);
+        });
         
         habitsContainer.innerHTML = "";
         habits.forEach(habit => {
@@ -64,7 +87,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
                 <div class="habit-right">
                     <span class="habit-time">${habit.startTime} - ${habit.endTime}</span>
-                    <button class="delete-btn">❌</button>
+                    <button class="delete-btn" aria-label="Delete habit">❌</button>
                 </div>
             `;
             
@@ -83,9 +106,18 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function toggleHabit(id) {
+        const today = new Date().toISOString().split('T')[0];
         habits = habits.map(habit => {
             if (habit.id === id) {
-                return { ...habit, completed: !habit.completed };
+                const updated = { ...habit, completed: !habit.completed };
+                // Add completion date when marked as completed
+                if (updated.completed) {
+                    updated.dateCompleted = today;
+                } else {
+                    // Remove completion date if unmarked
+                    delete updated.dateCompleted;
+                }
+                return updated;
             }
             return habit;
         });
@@ -110,33 +142,47 @@ document.addEventListener("DOMContentLoaded", () => {
         const today = new Date().toISOString().split('T')[0];
         const completedToday = habits.filter(habit => 
             habit.completed && 
-            (habit.dateCompleted === today || habit.dateCreated === today)
+            (habit.dateCompleted === today || 
+             (habit.dateCreated === today && !habit.dateCompleted))
         ).length;
         
         completedTodayValue.textContent = completedToday;
+
+        // Show or hide stats section based on whether there are habits
+        document.getElementById("statsSection").style.display = 
+            habits.length > 0 ? "block" : "none";
     }
 
     function saveHabits() {
         localStorage.setItem("habits", JSON.stringify(habits));
     }
 
-    function markCompleted(id) {
-        const today = new Date().toISOString().split('T')[0];
-        habits = habits.map(habit => {
-            if (habit.id === id && !habit.completed) {
-                return { ...habit, completed: true, dateCompleted: today };
-            }
-            return habit;
-        });
-    }
+    // Remove unused function
+    // function markCompleted(id) was unused in the original code
 
+    // Event Listeners
     addHabitBtn.addEventListener("click", addHabit);
-    habitInput.addEventListener("keypress", (e) => {
-        if (e.key === "Enter" && startTimeInput.value && durationInput.value) {
-            addHabit();
-        }
+    
+    // Allow form submission on Enter from any input field
+    const formInputs = [habitInput, startTimeInput, durationInput];
+    formInputs.forEach(input => {
+        input.addEventListener("keypress", (e) => {
+            if (e.key === "Enter") {
+                if (habitInput.value.trim() && startTimeInput.value && durationInput.value) {
+                    addHabit();
+                } else {
+                    const nextInput = formInputs[formInputs.indexOf(input) + 1];
+                    if (nextInput) {
+                        nextInput.focus();
+                    } else {
+                        addHabitBtn.click();
+                    }
+                }
+            }
+        });
     });
 
+    // Initial render
     renderHabits();
     updateStats();
 });

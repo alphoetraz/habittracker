@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Habit Tracker</title>
     <link rel="stylesheet" href="habittracker.css">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>✅</text></svg>">
 </head>
 <body>
     <h1>Habit Tracker</h1>
     
     <div class="add-habit-form">
-        <input type="text" id="habitInput" placeholder="Enter new habit...">
-        <input type="time" id="startTime" placeholder="Start Time">
-        <input type="number" id="duration" placeholder="Duration (minutes)" min="1"> 
-        <button id="addHabitBtn">Add</button>
+        <input type="text" id="habitInput" placeholder="Enter new habit..." aria-label="Habit name">
+        <input type="time" id="startTime" placeholder="Start Time" aria-label="Start time">
+        <input type="number" id="duration" placeholder="Duration (minutes)" min="1" max="1440" aria-label="Duration in minutes"> 
+        <button id="addHabitBtn">Add Habit</button>
     </div>
     
     <div class="habits-container" id="habitsContainer">

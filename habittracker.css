@@ -17,6 +17,14 @@ body {
 
 h1 {
     color: #be185d; /* text-pink-700 */
+    font-size: 1.875rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+h2 {
+    color: #be185d; /* text-pink-700 */
     font-size: 1.5rem;
     font-weight: bold;
     margin-bottom: 1rem;
@@ -25,18 +33,26 @@ h1 {
 
 .add-habit-form {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
     width: 100%;
     max-width: 28rem;
+    justify-content: center;
 }
 
 input {
-    flex-grow: 1;
-    padding: 0.5rem;
+    flex: 1 1 8rem;
+    padding: 0.75rem;
     border: 1px solid #fbcfe8;
     border-radius: 0.5rem;
     font-size: 1rem;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ec4899;
+    box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3);
 }
 
 button {
@@ -44,24 +60,37 @@ button {
     color: white;
     border: none;
     border-radius: 0.5rem;
-    padding: 0.5rem 1rem;
+    padding: 0.75rem 1.25rem;
     cursor: pointer;
-    transition: background-color 0.2s;
+    transition: background-color 0.2s, transform 0.1s;
     font-size: 1rem;
+    font-weight: 500;
 }
 
 button:hover {
     background-color: #db2777;
 }
 
+button:active {
+    transform: translateY(1px);
+}
+
 .habits-container {
     background-color: white;
-    border-radius: 0.5rem;
-    padding: 1rem;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     width: 100%;
     max-width: 28rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
+    min-height: 8rem;
+}
+
+.no-habits {
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+    padding: 1.5rem 0;
 }
 
 .habit-item {
@@ -87,6 +116,7 @@ button:hover {
     height: 1.25rem;
     accent-color: #ec4899;
     border-radius: 0.25rem;
+    cursor: pointer;
 }
 
 .habit-text {
@@ -98,15 +128,15 @@ button:hover {
     color: #9ca3af;
 }
 
-.habit-time {
-    font-size: 0.9rem;
-    color: #6b7280;
-    cursor: pointer;
+.habit-right {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.habit-time:focus {
-    outline: none;
-    border-bottom: 1px solid #ec4899;
+.habit-time {
+    font-size: 0.875rem;
+    color: #6b7280;
 }
 
 .delete-btn {
@@ -121,4 +151,50 @@ button:hover {
 
 .delete-btn:hover {
     color: #ef4444;
+}
+
+.stats {
+    width: 100%;
+    max-width: 28rem;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.stat-card {
+    background-color: white;
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: bold;
+    color: #ec4899;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+@media (max-width: 480px) {
+    .add-habit-form {
+        flex-direction: column;
+    }
+    
+    input {
+        width: 100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
 }
