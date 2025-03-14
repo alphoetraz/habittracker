@@ -6,7 +6,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const addHabitBtn = document.getElementById("addHabitBtn");
     const habitsContainer = document.getElementById("habitsContainer");
     const noHabitsMsg = document.getElementById("noHabitsMsg");
+    const totalHabitsValue = document.getElementById("totalHabitsValue");
+    const completedTodayValue = document.getElementById("completedTodayValue");
 
+    // Alışkanlık ekleme fonksiyonu
     function addHabit() {
         const habitName = habitInput.value.trim();
         const startTime = startTimeInput.value;
@@ -21,47 +24,132 @@ document.addEventListener("DOMContentLoaded", () => {
         const endMinute = startMinute + duration;
         const endHour = startHour + Math.floor(endMinute / 60);
         const finalEndMinute = endMinute % 60;
-        const endTime = `${String(endHour).padStart(2, "0")}:${String(finalEndMinute).padStart(2, "0")}`;
+        const endTime = `${String(endHour % 24).padStart(2, "0")}:${String(finalEndMinute).padStart(2, "0")}`;
 
         const newHabit = {
             id: Date.now(),
             text: habitName,
             completed: false,
             startTime,
-            endTime
+            endTime,
+            dateCreated: new Date().toISOString().split('T')[0] // Bugünün tarihi
         };
 
         habits.push(newHabit);
         saveHabits();
         renderHabits();
+        updateStats();
         habitInput.value = "";
         startTimeInput.value = "";
         durationInput.value = "";
     }
 
+    // Alışkanlıkları gösterme fonksiyonu
     function renderHabits() {
-        habitsContainer.innerHTML = habits.length ? "" : noHabitsMsg.outerHTML;
+        if (habits.length === 0) {
+            habitsContainer.innerHTML = noHabitsMsg.outerHTML;
+            return;
+        }
+        
+        habitsContainer.innerHTML = "";
         habits.forEach(habit => {
             const habitItem = document.createElement("div");
             habitItem.className = `habit-item ${habit.completed ? "completed" : ""}`;
+            habitItem.dataset.id = habit.id;
+            
             habitItem.innerHTML = `
                 <div class="habit-left">
-                    <span class="habit-time" contenteditable="true" onblur="updateTime(${habit.id}, this.innerText)">
-                        ${habit.startTime} - ${habit.endTime}
-                    </span>
-                    <input type="checkbox" class="checkbox" ${habit.completed ? "checked" : ""} onclick="toggleHabit(${habit.id})">
+                    <input type="checkbox" class="checkbox" ${habit.completed ? "checked" : ""}>
                     <span class="habit-text">${habit.text}</span>
                 </div>
-                <button class="delete-btn" onclick="deleteHabit(${habit.id})">❌</button>
+                <div class="habit-right">
+                    <span class="habit-time">${habit.startTime} - ${habit.endTime}</span>
+                    <button class="delete-btn">❌</button>
+                </div>
             `;
+            
+            // Checkbox olayı ekle
+            const checkbox = habitItem.querySelector(".checkbox");
+            checkbox.addEventListener("change", () => {
+                toggleHabit(habit.id);
+            });
+            
+            // Silme butonu olayı ekle
+            const deleteBtn = habitItem.querySelector(".delete-btn");
+            deleteBtn.addEventListener("click", () => {
+                deleteHabit(habit.id);
+            });
+            
             habitsContainer.appendChild(habitItem);
         });
     }
 
+    // Alışkanlığı tamamlama/tamamlanmamış yapma
+    function toggleHabit(id) {
+        habits = habits.map(habit => {
+            if (habit.id === id) {
+                return { ...habit, completed: !habit.completed };
+            }
+            return habit;
+        });
+        
+        saveHabits();
+        renderHabits();
+        updateStats();
+    }
+
+    // Alışkanlığı silme
+    function deleteHabit(id) {
+        if (confirm("Are you sure you want to delete this habit?")) {
+            habits = habits.filter(habit => habit.id !== id);
+            saveHabits();
+            renderHabits();
+            updateStats();
+        }
+    }
+
+    // İstatistikleri güncelleme
+    function updateStats() {
+        // Toplam alışkanlık sayısı
+        totalHabitsValue.textContent = habits.length;
+        
+        // Bugün tamamlanan alışkanlık sayısı
+        const today = new Date().toISOString().split('T')[0];
+        const completedToday = habits.filter(habit => 
+            habit.completed && 
+            (habit.dateCompleted === today || habit.dateCreated === today)
+        ).length;
+        
+        completedTodayValue.textContent = completedToday;
+    }
+
+    // LocalStorage'a kaydetme
     function saveHabits() {
         localStorage.setItem("habits", JSON.stringify(habits));
     }
 
+    // Tamamlama tarihini güncelleme için yardımcı fonksiyon
+    function markCompleted(id) {
+        const today = new Date().toISOString().split('T')[0];
+        habits = habits.map(habit => {
+            if (habit.id === id && !habit.completed) {
+                return { ...habit, completed: true, dateCompleted: today };
+            }
+            return habit;
+        });
+    }
+
+    // Olay dinleyicileri
     addHabitBtn.addEventListener("click", addHabit);
+    
+    // Enter tuşuna basılınca da alışkanlık eklensin
+    habitInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter" && startTimeInput.value && durationInput.value) {
+            addHabit();
+        }
+    });
+
+    // Sayfa yüklendiğinde alışkanlıkları göster ve istatistikleri güncelle
     renderHabits();
+    updateStats();
 });
