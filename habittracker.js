@@ -9,7 +9,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalHabitsValue = document.getElementById("totalHabitsValue");
     const completedTodayValue = document.getElementById("completedTodayValue");
 
-    // Alışkanlık ekleme fonksiyonu
     function addHabit() {
         const habitName = habitInput.value.trim();
         const startTime = startTimeInput.value;
@@ -20,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const [startHour, startMinute] = startTime.split(":").map(Number);
+        const [startHour, startMinute] = startTime.split(":" ).map(Number);
         const endMinute = startMinute + duration;
         const endHour = startHour + Math.floor(endMinute / 60);
         const finalEndMinute = endMinute % 60;
@@ -32,7 +31,7 @@ document.addEventListener("DOMContentLoaded", () => {
             completed: false,
             startTime,
             endTime,
-            dateCreated: new Date().toISOString().split('T')[0] // Bugünün tarihi
+            dateCreated: new Date().toISOString().split('T')[0]
         };
 
         habits.push(newHabit);
@@ -44,12 +43,13 @@ document.addEventListener("DOMContentLoaded", () => {
         durationInput.value = "";
     }
 
-    // Alışkanlıkları gösterme fonksiyonu
     function renderHabits() {
         if (habits.length === 0) {
             habitsContainer.innerHTML = noHabitsMsg.outerHTML;
             return;
         }
+        
+        habits.sort((a, b) => a.startTime.localeCompare(b.startTime));
         
         habitsContainer.innerHTML = "";
         habits.forEach(habit => {
@@ -68,13 +68,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             `;
             
-            // Checkbox olayı ekle
             const checkbox = habitItem.querySelector(".checkbox");
             checkbox.addEventListener("change", () => {
                 toggleHabit(habit.id);
             });
             
-            // Silme butonu olayı ekle
             const deleteBtn = habitItem.querySelector(".delete-btn");
             deleteBtn.addEventListener("click", () => {
                 deleteHabit(habit.id);
@@ -84,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Alışkanlığı tamamlama/tamamlanmamış yapma
     function toggleHabit(id) {
         habits = habits.map(habit => {
             if (habit.id === id) {
@@ -98,7 +95,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateStats();
     }
 
-    // Alışkanlığı silme
     function deleteHabit(id) {
         if (confirm("Are you sure you want to delete this habit?")) {
             habits = habits.filter(habit => habit.id !== id);
@@ -108,12 +104,9 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // İstatistikleri güncelleme
     function updateStats() {
-        // Toplam alışkanlık sayısı
         totalHabitsValue.textContent = habits.length;
         
-        // Bugün tamamlanan alışkanlık sayısı
         const today = new Date().toISOString().split('T')[0];
         const completedToday = habits.filter(habit => 
             habit.completed && 
@@ -123,12 +116,10 @@ document.addEventListener("DOMContentLoaded", () => {
         completedTodayValue.textContent = completedToday;
     }
 
-    // LocalStorage'a kaydetme
     function saveHabits() {
         localStorage.setItem("habits", JSON.stringify(habits));
     }
 
-    // Tamamlama tarihini güncelleme için yardımcı fonksiyon
     function markCompleted(id) {
         const today = new Date().toISOString().split('T')[0];
         habits = habits.map(habit => {
@@ -139,17 +130,13 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Olay dinleyicileri
     addHabitBtn.addEventListener("click", addHabit);
-    
-    // Enter tuşuna basılınca da alışkanlık eklensin
     habitInput.addEventListener("keypress", (e) => {
         if (e.key === "Enter" && startTimeInput.value && durationInput.value) {
             addHabit();
         }
     });
 
-    // Sayfa yüklendiğinde alışkanlıkları göster ve istatistikleri güncelle
     renderHabits();
     updateStats();
 });
