@@ -10,15 +10,67 @@
 <body>
     <h1>Habit Tracker</h1>
     
+    <div class="view-controls">
+        <button id="dailyViewBtn" class="view-btn active">Daily</button>
+        <button id="weeklyViewBtn" class="view-btn">Weekly</button>
+        <button id="monthlyViewBtn" class="view-btn">Monthly</button>
+    </div>
+    
     <div class="add-habit-form">
         <input type="text" id="habitInput" placeholder="Enter new habit..." aria-label="Habit name">
         <input type="time" id="startTime" placeholder="Start Time" aria-label="Start time">
-        <input type="number" id="duration" placeholder="Duration (minutes)" min="1" max="1440" aria-label="Duration in minutes"> 
+        <input type="number" id="duration" placeholder="Duration (minutes)" min="1" max="1440" aria-label="Duration in minutes">
+        <select id="habitCategory">
+            <option value="health">Health</option>
+            <option value="productivity">Productivity</option>
+            <option value="learning">Learning</option>
+            <option value="other">Other</option>
+        </select>
+        <div class="reminder-option">
+            <input type="checkbox" id="reminderEnabled">
+            <label for="reminderEnabled">Reminder</label>
+        </div>
         <button id="addHabitBtn">Add Habit</button>
     </div>
     
-    <div class="habits-container" id="habitsContainer">
-        <p class="no-habits" id="noHabitsMsg">No habits added yet. Add a habit to get started!</p>
+    <!-- Daily View -->
+    <div id="dailyView" class="view-container active">
+        <div class="habits-container" id="habitsContainer">
+            <p class="no-habits" id="noHabitsMsg">No habits added yet. Add a habit to get started!</p>
+        </div>
+    </div>
+    
+    <!-- Weekly View -->
+    <div id="weeklyView" class="view-container">
+        <div class="weekly-calendar" id="weeklyCalendar">
+            <div class="week-header">
+                <button id="prevWeek" class="calendar-nav">←</button>
+                <h3 id="weekRange">Week of March 10-16, 2025</h3>
+                <button id="nextWeek" class="calendar-nav">→</button>
+            </div>
+            <div class="week-days" id="weekDays"></div>
+        </div>
+    </div>
+    
+    <!-- Monthly View -->
+    <div id="monthlyView" class="view-container">
+        <div class="monthly-calendar" id="monthlyCalendar">
+            <div class="month-header">
+                <button id="prevMonth" class="calendar-nav">←</button>
+                <h3 id="currentMonth">March 2025</h3>
+                <button id="nextMonth" class="calendar-nav">→</button>
+            </div>
+            <div class="month-days-header">
+                <div>Sun</div>
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+            </div>
+            <div class="month-days" id="monthDays"></div>
+        </div>
     </div>
     
     <div class="stats" id="statsSection">
@@ -32,9 +84,43 @@
                 <div class="stat-value" id="completedTodayValue">0</div>
                 <div class="stat-label">Completed Today</div>
             </div>
+            <div class="stat-card">
+                <div class="stat-value" id="streakValue">0</div>
+                <div class="stat-label">Current Streak</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" id="completionRateValue">0%</div>
+                <div class="stat-label">Completion Rate</div>
+            </div>
+        </div>
+        
+        <div class="achievement-section">
+            <h3>Achievements</h3>
+            <div class="achievements" id="achievementsContainer"></div>
+        </div>
+        
+        <div class="chart-container">
+            <h3>Habit Completion Over Time</h3>
+            <canvas id="completionChart"></canvas>
         </div>
     </div>
-
+    
+    <!-- Notifications -->
+    <div id="notificationContainer" class="notification-container"></div>
+    
+    <!-- Notification Permission Dialog -->
+    <div id="notificationDialog" class="dialog">
+        <div class="dialog-content">
+            <h3>Enable Reminders</h3>
+            <p>Would you like to receive notifications for your habits?</p>
+            <div class="dialog-buttons">
+                <button id="allowNotifications">Yes, Enable</button>
+                <button id="denyNotifications">No, Thanks</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="habittracker.js" defer></script>
 </body>
 </html>
