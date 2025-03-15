@@ -9,6 +9,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const totalHabitsValue = document.getElementById("totalHabitsValue");
     const completedTodayValue = document.getElementById("completedTodayValue");
 
+    const viewButtons = document.querySelectorAll(".view-btn");
+    const viewContainers = document.querySelectorAll(".view-container");
+
     // Set default time to current hour
     const setDefaultTime = () => {
         const now = new Date();
@@ -64,13 +67,10 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
         
-        // Sort habits by start time and completion status
         habits.sort((a, b) => {
-            // Show incomplete habits first
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;
             }
-            // Then sort by start time
             return a.startTime.localeCompare(b.startTime);
         });
         
@@ -110,11 +110,9 @@ document.addEventListener("DOMContentLoaded", () => {
         habits = habits.map(habit => {
             if (habit.id === id) {
                 const updated = { ...habit, completed: !habit.completed };
-                // Add completion date when marked as completed
                 if (updated.completed) {
                     updated.dateCompleted = today;
                 } else {
-                    // Remove completion date if unmarked
                     delete updated.dateCompleted;
                 }
                 return updated;
@@ -148,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
         
         completedTodayValue.textContent = completedToday;
 
-        // Show or hide stats section based on whether there are habits
         document.getElementById("statsSection").style.display = 
             habits.length > 0 ? "block" : "none";
     }
@@ -157,13 +154,35 @@ document.addEventListener("DOMContentLoaded", () => {
         localStorage.setItem("habits", JSON.stringify(habits));
     }
 
-    // Remove unused function
-    // function markCompleted(id) was unused in the original code
+    function switchView(viewId) {
+        viewContainers.forEach(container => {
+            if (container.id === viewId) {
+                container.classList.add("active");
+            } else {
+                container.classList.remove("active");
+            }
+        });
 
-    // Event Listeners
+        viewButtons.forEach(button => {
+            if (button.id === `${viewId}Btn`) {
+                button.classList.add("active");
+            } else {
+                button.classList.remove("active");
+            }
+        });
+    }
+
+    viewButtons.forEach(button => {
+        button.addEventListener("click", () => {
+            const viewId = button.id.replace("Btn", "");
+            switchView(viewId);
+        });
+    });
+
+    switchView("dailyView");
+
     addHabitBtn.addEventListener("click", addHabit);
     
-    // Allow form submission on Enter from any input field
     const formInputs = [habitInput, startTimeInput, durationInput];
     formInputs.forEach(input => {
         input.addEventListener("keypress", (e) => {
@@ -182,7 +201,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     });
 
-    // Initial render
     renderHabits();
     updateStats();
 });

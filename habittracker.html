@@ -14,22 +14,13 @@
         <button id="dailyViewBtn" class="view-btn active">Daily</button>
         <button id="weeklyViewBtn" class="view-btn">Weekly</button>
         <button id="monthlyViewBtn" class="view-btn">Monthly</button>
+        <button id="yearlyViewBtn" class="view-btn">Yearly</button>
     </div>
     
     <div class="add-habit-form">
         <input type="text" id="habitInput" placeholder="Enter new habit..." aria-label="Habit name">
         <input type="time" id="startTime" placeholder="Start Time" aria-label="Start time">
         <input type="number" id="duration" placeholder="Duration (minutes)" min="1" max="1440" aria-label="Duration in minutes">
-        <select id="habitCategory">
-            <option value="health">Health</option>
-            <option value="productivity">Productivity</option>
-            <option value="learning">Learning</option>
-            <option value="other">Other</option>
-        </select>
-        <div class="reminder-option">
-            <input type="checkbox" id="reminderEnabled">
-            <label for="reminderEnabled">Reminder</label>
-        </div>
         <button id="addHabitBtn">Add Habit</button>
     </div>
     
