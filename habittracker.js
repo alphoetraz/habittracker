@@ -8,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const noHabitsMsg = document.getElementById("noHabitsMsg");
     const totalHabitsValue = document.getElementById("totalHabitsValue");
     const completedTodayValue = document.getElementById("completedTodayValue");
-
     const viewButtons = document.querySelectorAll(".view-btn");
     const viewContainers = document.querySelectorAll(".view-container");
 
@@ -66,20 +65,20 @@ document.addEventListener("DOMContentLoaded", () => {
             habitsContainer.innerHTML = `<p class="no-habits" id="noHabitsMsg">No habits added yet. Add a habit to get started!</p>`;
             return;
         }
-        
+
         habits.sort((a, b) => {
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;
             }
             return a.startTime.localeCompare(b.startTime);
         });
-        
+
         habitsContainer.innerHTML = "";
         habits.forEach(habit => {
             const habitItem = document.createElement("div");
             habitItem.className = `habit-item ${habit.completed ? "completed" : ""}`;
             habitItem.dataset.id = habit.id;
-            
+
             habitItem.innerHTML = `
                 <div class="habit-left">
                     <input type="checkbox" class="checkbox" ${habit.completed ? "checked" : ""}>
@@ -90,17 +89,17 @@ document.addEventListener("DOMContentLoaded", () => {
                     <button class="delete-btn" aria-label="Delete habit">❌</button>
                 </div>
             `;
-            
+
             const checkbox = habitItem.querySelector(".checkbox");
             checkbox.addEventListener("change", () => {
                 toggleHabit(habit.id);
             });
-            
+
             const deleteBtn = habitItem.querySelector(".delete-btn");
             deleteBtn.addEventListener("click", () => {
                 deleteHabit(habit.id);
             });
-            
+
             habitsContainer.appendChild(habitItem);
         });
     }
@@ -119,7 +118,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
             return habit;
         });
-        
+
         saveHabits();
         renderHabits();
         updateStats();
@@ -136,17 +135,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function updateStats() {
         totalHabitsValue.textContent = habits.length;
-        
+
         const today = new Date().toISOString().split('T')[0];
-        const completedToday = habits.filter(habit => 
-            habit.completed && 
-            (habit.dateCompleted === today || 
-             (habit.dateCreated === today && !habit.dateCompleted))
+        const completedToday = habits.filter(habit =>
+            habit.completed &&
+            (habit.dateCompleted === today ||
+                (habit.dateCreated === today && !habit.dateCompleted))
         ).length;
-        
+
         completedTodayValue.textContent = completedToday;
 
-        document.getElementById("statsSection").style.display = 
+        document.getElementById("statsSection").style.display =
             habits.length > 0 ? "block" : "none";
     }
 
@@ -182,7 +181,7 @@ document.addEventListener("DOMContentLoaded", () => {
     switchView("dailyView");
 
     addHabitBtn.addEventListener("click", addHabit);
-    
+
     const formInputs = [habitInput, startTimeInput, durationInput];
     formInputs.forEach(input => {
         input.addEventListener("keypress", (e) => {
@@ -203,4 +202,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     renderHabits();
     updateStats();
+
+    // ========== DARK MODE TOGGLE ========== //
+    const themeToggleBtn = document.getElementById("themeToggleBtn");
+    if (themeToggleBtn) {
+        themeToggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            if (document.body.classList.contains("dark-mode")) {
+                themeToggleBtn.textContent = "☀️ Light Mode";
+            } else {
+                themeToggleBtn.textContent = "🌙 Dark Mode";
+            }
+        });
+    }
 });
