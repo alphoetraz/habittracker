@@ -13,6 +13,51 @@ document.addEventListener("DOMContentLoaded", () => {
     const viewButtons = document.querySelectorAll(".view-btn");
     const viewContainers = document.querySelectorAll(".view-container");
 
+    // Zaman girişi için fonksiyon
+    function createTimeInput(currentTime, type, habit, timeSpan) {
+        const timeInput = document.createElement('input');
+        timeInput.type = 'time';
+        timeInput.value = currentTime;
+        timeInput.classList.add('inline-time-input');
+        
+        timeSpan.innerHTML = '';
+        timeSpan.appendChild(timeInput);
+        timeInput.focus();
+
+        timeInput.addEventListener('blur', () => {
+            const newTime = timeInput.value;
+            
+            const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
+            if (!timeRegex.test(newTime)) {
+                alert("Invalid time format. Please use HH:MM format.");
+                timeSpan.textContent = currentTime;
+                return;
+            }
+
+            // Zamanları güncelle
+            if (type === 'start') {
+                habit.startTime = newTime;
+            } else {
+                habit.endTime = newTime;
+            }
+
+            // Zamanı span'a geri yaz
+            timeSpan.textContent = newTime;
+
+            // Kaydet
+            saveHabits();
+            renderHabits();
+        });
+
+        timeInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                timeInput.blur();
+            }
+        });
+
+        return timeInput;
+    }
+
     // Set default time to current hour
     const setDefaultTime = () => {
         const now = new Date();
@@ -90,10 +135,26 @@ document.addEventListener("DOMContentLoaded", () => {
                     <span class="habit-text">${habit.text}</span>
                 </div>
                 <div class="habit-right">
-                    <span class="habit-time">${habit.startTime} - ${habit.endTime}</span>
+                    <span class="habit-time" id="habitTime-${habit.id}">
+                        <span class="start-time" id="startTime-${habit.id}">${habit.startTime}</span> - 
+                        <span class="end-time" id="endTime-${habit.id}">${habit.endTime}</span>
+                    </span>
                     <button class="delete-btn" aria-label="Delete habit">❌</button>
                 </div>
             `;
+
+            const startTimeSpan = habitItem.querySelector(`#startTime-${habit.id}`);
+            const endTimeSpan = habitItem.querySelector(`#endTime-${habit.id}`);
+
+            // Başlangıç zamanı için çift tıklama
+            startTimeSpan.addEventListener('dblclick', () => {
+                createTimeInput(habit.startTime, 'start', habit, startTimeSpan);
+            });
+
+            // Bitiş zamanı için çift tıklama
+            endTimeSpan.addEventListener('dblclick', () => {
+                createTimeInput(habit.endTime, 'end', habit, endTimeSpan);
+            });
 
             const checkbox = habitItem.querySelector(".checkbox");
             checkbox.addEventListener("change", () => {
