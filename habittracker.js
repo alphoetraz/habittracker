@@ -219,6 +219,7 @@ document.addEventListener("DOMContentLoaded", () => {
         
         // Silme onayı için bir konteyner oluştur
         const deleteConfirmation = document.createElement('div');
+        deleteConfirmation.classList.add('delete-confirm-modal');
         deleteConfirmation.innerHTML = `
             <div class="delete-confirm">
                 <p>Are you sure you want to delete "${habitToDelete.text}"?</p>
@@ -228,31 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 </div>
             </div>
         `;
-
-        // Stil için dinamik ayarlamalar
-        deleteConfirmation.style.position = 'fixed';
-        deleteConfirmation.style.top = '50%';
-        deleteConfirmation.style.left = '50%';
-        deleteConfirmation.style.transform = 'translate(-50%, -50%)';
-        deleteConfirmation.style.padding = '20px';
-        deleteConfirmation.style.borderRadius = '8px';
-        deleteConfirmation.style.zIndex = '1000';
-        deleteConfirmation.style.textAlign = 'center';
-        deleteConfirmation.style.maxWidth = '300px';
-        deleteConfirmation.style.width = '90%';
-
-        // Dark mode ve light mode için dinamik stil
-        if (document.body.classList.contains('dark-mode')) {
-            deleteConfirmation.style.backgroundColor = '#16213e';
-            deleteConfirmation.style.color = '#e0e0e0';
-            deleteConfirmation.style.border = '1px solid #0f3460';
-            deleteConfirmation.style.boxShadow = '0 4px 6px rgba(0,0,0,0.2)';
-        } else {
-            deleteConfirmation.style.backgroundColor = 'white';
-            deleteConfirmation.style.color = '#3f3f46';
-            deleteConfirmation.style.border = '1px solid #e0e0e0';
-            deleteConfirmation.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
-        }
         
         document.body.appendChild(deleteConfirmation);
 
