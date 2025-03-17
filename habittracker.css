@@ -15,33 +15,101 @@ body {
     align-items: center;
 }
 body.dark-mode {
-    background-color: #121212;
-    color: #f0f0f0;
+    background-color: #1a1a2e; /* Daha derinlikli koyu arka plan */
+    color: #e0e0e0;
 }
 
+/* Habit Container */
+body.dark-mode .habits-container,
+body.dark-mode .weekly-calendar,
+body.dark-mode .monthly-calendar,
+body.dark-mode .stat-card,
+body.dark-mode .achievement-section,
+body.dark-mode .chart-container {
+    background-color: #16213e; /* Derinlikli mor-mavi ton */
+    border: 1px solid #0f3460; /* Hafif kenarlık */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+}
+
+/* Habit Items */
 body.dark-mode .habit-item {
-    background-color: #1e1e1e;
-    border-color: #333;
+    border-bottom-color: #0f3460; /* Koyu kenarlık */
 }
 
-body.dark-mode input,
-body.dark-mode button {
-    background-color: #2a2a2a;
-    color: #f0f0f0;
-    border: 1px solid #555;
+body.dark-mode .habit-text {
+    color: #e0e0e0;
+}
+
+body.dark-mode .completed .habit-text {
+    color: #888;
+    text-decoration: line-through;
+}
+
+/* Buttons */
+body.dark-mode .view-btn {
+    background-color: #0f3460;
+    color: #e0e0e0;
+    border: 1px solid #16213e;
 }
 
 body.dark-mode .view-btn.active {
-    background-color: #444;
+    background-color: #ec4899; /* Pembe ton */
+    color: white;
 }
 
-body.dark-mode .stat-card {
-    background-color: #1e1e1e;
+body.dark-mode .view-btn:hover:not(.active) {
+    background-color: #16213e;
 }
 
-body.dark-mode .dialog-content {
-    background-color: #1e1e1e;
-    color: #f0f0f0;
+/* Inputs */
+body.dark-mode input,
+body.dark-mode button {
+    background-color: #0f3460;
+    color: #e0e0e0;
+    border: 1px solid #16213e;
+}
+
+body.dark-mode input:focus,
+body.dark-mode button:focus {
+    border-color: #ec4899; /* Pembe vurgu */
+    box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.3);
+}
+
+/* Stats and Values */
+body.dark-mode .stat-value {
+    color: #ec4899; /* Pembe ton */
+}
+
+body.dark-mode .stat-label {
+    color: #888;
+}
+
+/* Headings */
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3 {
+    color: #ec4899; /* Pembe ton */
+}
+
+/* Calendar and Weekly Views */
+body.dark-mode .week-day,
+body.dark-mode .month-day {
+    background-color: #0f3460;
+    border-color: #16213e;
+}
+
+body.dark-mode .current-day {
+    border-color: #ec4899;
+}
+
+/* Achievements */
+body.dark-mode .achievement {
+    background-color: #0f3460;
+    color: #e0e0e0;
+}
+
+body.dark-mode .achievement.locked {
+    opacity: 0.6;
 }
 
 
