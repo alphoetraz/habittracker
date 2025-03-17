@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     let habits = JSON.parse(localStorage.getItem("habits")) || [];
+    let activeView = "dailyView"; // activeView değişkenini ekledik
+
     const habitInput = document.getElementById("habitInput");
     const startTimeInput = document.getElementById("startTime");
     const durationInput = document.getElementById("duration");
@@ -43,7 +45,8 @@ document.addEventListener("DOMContentLoaded", () => {
             completed: false,
             startTime,
             endTime,
-            dateCreated: today
+            dateCreated: today,
+            view: activeView // Görünüm bilgisini ekledik
         };
 
         habits.push(newHabit);
@@ -61,12 +64,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderHabits() {
-        if (habits.length === 0) {
+        const filteredHabits = habits.filter(habit => habit.view === activeView);
+
+        if (filteredHabits.length === 0) {
             habitsContainer.innerHTML = `<p class="no-habits" id="noHabitsMsg">No habits added yet. Add a habit to get started!</p>`;
             return;
         }
 
-        habits.sort((a, b) => {
+        filteredHabits.sort((a, b) => {
             if (a.completed !== b.completed) {
                 return a.completed ? 1 : -1;
             }
@@ -74,7 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         habitsContainer.innerHTML = "";
-        habits.forEach(habit => {
+        filteredHabits.forEach(habit => {
             const habitItem = document.createElement("div");
             habitItem.className = `habit-item ${habit.completed ? "completed" : ""}`;
             habitItem.dataset.id = habit.id;
@@ -134,10 +139,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function updateStats() {
-        totalHabitsValue.textContent = habits.length;
+        const filteredHabits = habits.filter(habit => habit.view === activeView);
+        
+        // Total Habits
+        totalHabitsValue.textContent = filteredHabits.length;
 
+        // Completed Today
         const today = new Date().toISOString().split('T')[0];
-        const completedToday = habits.filter(habit =>
+        const completedToday = filteredHabits.filter(habit =>
             habit.completed &&
             (habit.dateCompleted === today ||
                 (habit.dateCreated === today && !habit.dateCompleted))
@@ -145,8 +154,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
         completedTodayValue.textContent = completedToday;
 
+        // Completion Rate
+        const totalHabits = filteredHabits.length;
+        const completedHabits = filteredHabits.filter(habit => habit.completed).length;
+        
+        const completionRate = totalHabits > 0 
+            ? Math.round((completedHabits / totalHabits) * 100) 
+            : 0;
+
+        const completionRateValue = document.getElementById("completionRateValue");
+        completionRateValue.textContent = `${completionRate}%`;
+
+        // Stats Section Visibility
         document.getElementById("statsSection").style.display =
-            habits.length > 0 ? "block" : "none";
+            filteredHabits.length > 0 ? "block" : "none";
     }
 
     function saveHabits() {
@@ -154,6 +175,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function switchView(viewId) {
+        activeView = viewId; // activeView'i güncelle
         viewContainers.forEach(container => {
             if (container.id === viewId) {
                 container.classList.add("active");
@@ -169,6 +191,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 button.classList.remove("active");
             }
         });
+
+        renderHabits(); // Görünüm değiştiğinde alışkanlıkları yeniden render et
+        updateStats(); // İstatistikleri güncelle
     }
 
     viewButtons.forEach(button => {
