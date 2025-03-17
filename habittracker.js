@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", () => {
     let habits = JSON.parse(localStorage.getItem("habits")) || [];
-    let activeView = "dailyView"; // activeView değişkenini ekledik
+    let activeView = "dailyView";
 
     const habitInput = document.getElementById("habitInput");
     const startTimeInput = document.getElementById("startTime");
@@ -12,6 +12,29 @@ document.addEventListener("DOMContentLoaded", () => {
     const completedTodayValue = document.getElementById("completedTodayValue");
     const viewButtons = document.querySelectorAll(".view-btn");
     const viewContainers = document.querySelectorAll(".view-container");
+
+    // Bildirim fonksiyonu
+    function showNotification(message, type = 'info') {
+        const container = document.getElementById('notificationContainer');
+        const notification = document.createElement('div');
+        notification.className = `notification ${type}`;
+        notification.textContent = message;
+        
+        container.appendChild(notification);
+        
+        // Bildirimi görünür yap
+        setTimeout(() => {
+            notification.style.opacity = '1';
+        }, 10);
+        
+        // Bildirimi kaldır
+        setTimeout(() => {
+            notification.style.opacity = '0';
+            setTimeout(() => {
+                container.removeChild(notification);
+            }, 300);
+        }, 3000);
+    }
 
     // Zaman girişi için fonksiyon
     function createTimeInput(currentTime, type, habit, timeSpan) {
@@ -29,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
             
             const timeRegex = /^([01]\d|2[0-3]):([0-5]\d)$/;
             if (!timeRegex.test(newTime)) {
-                alert("Invalid time format. Please use HH:MM format.");
+                showNotification("Invalid time format. Please use HH:MM format.", 'error');
                 timeSpan.textContent = currentTime;
                 return;
             }
@@ -44,7 +67,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Zamanı span'a geri yaz
             timeSpan.textContent = newTime;
 
-            // Kaydet
+            // Kaydet ve yeniden sırala
             saveHabits();
             renderHabits();
         });
@@ -73,7 +96,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const duration = parseInt(durationInput.value, 10);
 
         if (!habitName || !startTime || isNaN(duration) || duration <= 0) {
-            alert("Please enter a valid habit name, start time, and duration.");
+            showNotification('Please enter a valid habit name, start time, and duration.', 'error');
             return;
         }
 
@@ -91,7 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
             startTime,
             endTime,
             dateCreated: today,
-            view: activeView // Görünüm bilgisini ekledik
+            view: activeView
         };
 
         habits.push(newHabit);
@@ -99,6 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderHabits();
         updateStats();
         resetForm();
+        showNotification('Habit added successfully', 'success');
     }
 
     function resetForm() {
@@ -191,12 +215,62 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function deleteHabit(id) {
-        if (confirm("Are you sure you want to delete this habit?")) {
+        const habitToDelete = habits.find(habit => habit.id === id);
+        
+        // Silme onayı için bir konteyner oluştur
+        const deleteConfirmation = document.createElement('div');
+        deleteConfirmation.innerHTML = `
+            <div class="delete-confirm">
+                <p>Are you sure you want to delete "${habitToDelete.text}"?</p>
+                <div class="delete-actions">
+                    <button class="confirm-delete">Delete</button>
+                    <button class="cancel-delete">Cancel</button>
+                </div>
+            </div>
+        `;
+
+        // Stil için dinamik ayarlamalar
+        deleteConfirmation.style.position = 'fixed';
+        deleteConfirmation.style.top = '50%';
+        deleteConfirmation.style.left = '50%';
+        deleteConfirmation.style.transform = 'translate(-50%, -50%)';
+        deleteConfirmation.style.padding = '20px';
+        deleteConfirmation.style.borderRadius = '8px';
+        deleteConfirmation.style.zIndex = '1000';
+        deleteConfirmation.style.textAlign = 'center';
+        deleteConfirmation.style.maxWidth = '300px';
+        deleteConfirmation.style.width = '90%';
+
+        // Dark mode ve light mode için dinamik stil
+        if (document.body.classList.contains('dark-mode')) {
+            deleteConfirmation.style.backgroundColor = '#16213e';
+            deleteConfirmation.style.color = '#e0e0e0';
+            deleteConfirmation.style.border = '1px solid #0f3460';
+            deleteConfirmation.style.boxShadow = '0 4px 6px rgba(0,0,0,0.2)';
+        } else {
+            deleteConfirmation.style.backgroundColor = 'white';
+            deleteConfirmation.style.color = '#3f3f46';
+            deleteConfirmation.style.border = '1px solid #e0e0e0';
+            deleteConfirmation.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+        }
+        
+        document.body.appendChild(deleteConfirmation);
+
+        const confirmDelete = deleteConfirmation.querySelector('.confirm-delete');
+        const cancelDelete = deleteConfirmation.querySelector('.cancel-delete');
+
+        confirmDelete.addEventListener('click', () => {
             habits = habits.filter(habit => habit.id !== id);
             saveHabits();
             renderHabits();
             updateStats();
-        }
+            document.body.removeChild(deleteConfirmation);
+            showNotification('Habit deleted successfully', 'success');
+        });
+
+        cancelDelete.addEventListener('click', () => {
+            document.body.removeChild(deleteConfirmation);
+        });
     }
 
     function updateStats() {
@@ -236,7 +310,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function switchView(viewId) {
-        activeView = viewId; // activeView'i güncelle
+        activeView = viewId;
         viewContainers.forEach(container => {
             if (container.id === viewId) {
                 container.classList.add("active");
@@ -253,8 +327,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        renderHabits(); // Görünüm değiştiğinde alışkanlıkları yeniden render et
-        updateStats(); // İstatistikleri güncelle
+        renderHabits();
+        updateStats();
     }
 
     viewButtons.forEach(button => {
