@@ -90,6 +90,58 @@ document.addEventListener("DOMContentLoaded", () => {
     };
     setDefaultTime();
 
+
+    function getCurrentWeek() {
+        const now = new Date();
+        const currentDay = now.getDay(); // 0 Pazar, 1 Pazartesi, ...
+        
+        // Haftanın başlangıcı (Pazartesi günü)
+        const startOfWeek = new Date(now);
+        startOfWeek.setDate(now.getDate() - currentDay + (currentDay === 0 ? -6 : 1));
+        
+        // Haftanın bitişi (Pazar günü)
+        const endOfWeek = new Date(startOfWeek);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+        
+        return {
+            start: startOfWeek,
+            end: endOfWeek
+        };
+    }
+    
+    function formatWeekRange(startDate, endDate) {
+        const options = { month: 'long', day: 'numeric' };
+        return `Week of ${startDate.toLocaleDateString('en-US', options)} - ${endDate.toLocaleDateString('en-US', options)} ${startDate.getFullYear()}`;
+    }
+    
+    // Hafta değiştirme fonksiyonları
+    let currentWeekOffset = 0;
+    
+    function updateWeekView() {
+        const weekRange = getCurrentWeek();
+        const adjustedStart = new Date(weekRange.start);
+        adjustedStart.setDate(adjustedStart.getDate() + (currentWeekOffset * 7));
+        
+        const adjustedEnd = new Date(adjustedStart);
+        adjustedEnd.setDate(adjustedStart.getDate() + 6);
+        
+        const weekRangeElement = document.getElementById('weekRange');
+        weekRangeElement.textContent = formatWeekRange(adjustedStart, adjustedEnd);
+    }
+    
+    // Event listener'ları ekleyin
+    document.getElementById('prevWeek').addEventListener('click', () => {
+        currentWeekOffset--;
+        updateWeekView();
+    });
+    
+    document.getElementById('nextWeek').addEventListener('click', () => {
+        currentWeekOffset++;
+        updateWeekView();
+    });
+    updateWeekView();
+
+
     function addHabit() {
         const habitName = habitInput.value.trim();
         const startTime = startTimeInput.value;
@@ -133,6 +185,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function renderHabits() {
+        const habitsContainer = document.querySelector(`#${activeView} .habits-container`);
         const filteredHabits = habits.filter(habit => habit.view === activeView);
 
         if (filteredHabits.length === 0) {
