@@ -760,12 +760,6 @@ canvas {
     background-color: #ff9800;
     color: white;
 }
-body.dark-mode .delete-confirm {
-    background-color: #16213e; /* Koyu mor-mavi ton */
-    color: #e0e0e0; /* Açık gri metin */
-    border: 1px solid #0f3460; /* Kenarlık rengi */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-}
 
 body.dark-mode .delete-confirm p {
     color: #e0e0e0;
@@ -796,7 +790,7 @@ body.dark-mode .confirm-delete:hover {
 }
 
 body.dark-mode .cancel-delete {
-    background-color: #0f3460; /* Koyu mavi */
+    background-color: #ec4899; /* Koyu mavi */
     color: white;
 }
 
