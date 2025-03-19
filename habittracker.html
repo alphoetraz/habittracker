@@ -35,7 +35,7 @@
         <div class="weekly-container">
             <div class="week-header">
                 <button id="prevWeek" class="calendar-nav">←</button>
-                <h3 id="weekRange">Week of March 10-16, 2025</h3>
+                <h3 id="weekRange"></h3>
                 <button id="nextWeek" class="calendar-nav">→</button>
             </div>
             <div class="week-days" id="weekDays"></div>
@@ -46,27 +46,18 @@
     </div>
     
     <div id="monthlyView" class="view-container">
-        <div class="monthly-calendar" id="monthlyCalendar">
+        <div class="monthly-container">
             <div class="month-header">
                 <button id="prevMonth" class="calendar-nav">←</button>
-                <h3 id="currentMonth">March 2025</h3>
+                <h3 id="currentMonth"></h3>
                 <button id="nextMonth" class="calendar-nav">→</button>
             </div>
-            <div class="month-days-header">
-                <div>Sun</div>
-                <div>Mon</div>
-                <div>Tue</div>
-                <div>Wed</div>
-                <div>Thu</div>
-                <div>Fri</div>
-                <div>Sat</div>
+            <div class="habits-container" id="monthlyHabitsContainer">
+                <p class="no-habits" id="noMonthlyHabitsMsg">No habits added yet. Add a habit to get started!</p>
             </div>
-            <div class="month-days" id="monthDays"></div>
-        </div>
-        <div class="habits-container" id="monthlyHabitsContainer">
-            <p class="no-habits" id="noMonthlyHabitsMsg">No habits added yet. Add a habit to get started!</p>
         </div>
     </div>
+
     <div id="yearlyView" class="view-container">
         <div class="yearly-calendar" id="yearlyCalendar">
             <!-- Eğer yearly için bir başlık veya navigasyon eklemek isterseniz buraya ekleyebilirsiniz -->

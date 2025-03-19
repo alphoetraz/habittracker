@@ -889,3 +889,69 @@ body.dark-mode .calendar-nav {
 body.dark-mode .calendar-nav:hover {
     background-color: rgba(236, 72, 153, 0.3);
 }
+.monthly-container {
+    background-color: #fce7f3; /* Açık pembe */
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    margin-bottom: 2rem;
+    border: 1px solid #fbcfe8; /* Hafif pembe kenarlık */
+}
+
+.month-header {
+    background-color: #ec4899; /* Canlı pembe */
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.month-header h3 {
+    color: white;
+    margin: 0;
+}
+
+body.dark-mode .monthly-container {
+    background-color: #16213e; /* Koyu mor-mavi ton */
+    border: 1px solid #0f3460;
+}
+
+body.dark-mode .month-header {
+    background-color: #0f3460; /* Daha koyu mavi ton */
+    color: #e0e0e0; /* Açık gri metin rengi */
+}
+
+body.dark-mode .month-header h3 {
+    color: #ec4899; /* Pembe ton */
+}
+
+.calendar-nav {
+    background-color: rgba(255,255,255,0.2);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.calendar-nav:hover {
+    background-color: rgba(255,255,255,0.3);
+}
+
+body.dark-mode .calendar-nav {
+    background-color: rgba(236, 72, 153, 0.2); /* Şeffaf pembe */
+    color: #ec4899; /* Pembe renk */
+}
+
+body.dark-mode .calendar-nav:hover {
+    background-color: rgba(236, 72, 153, 0.3);
+}

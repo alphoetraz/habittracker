@@ -141,6 +141,34 @@ document.addEventListener("DOMContentLoaded", () => {
     });
     updateWeekView();
 
+    let currentMonthOffset = 0;
+
+    function updateMonthView() {
+        const monthNames = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+        
+        const now = new Date();
+        const currentMonth = new Date(now.getFullYear(), now.getMonth() + currentMonthOffset, 1);
+        
+        const currentMonthElement = document.getElementById('currentMonth');
+        currentMonthElement.textContent = `${monthNames[currentMonth.getMonth()]} ${currentMonth.getFullYear()}`;
+    }
+    
+    // Event listener'ları ekleyin
+    document.getElementById('prevMonth').addEventListener('click', () => {
+        currentMonthOffset--;
+        updateMonthView();
+    });
+    
+    document.getElementById('nextMonth').addEventListener('click', () => {
+        currentMonthOffset++;
+        updateMonthView();
+    });
+    
+    // Sayfa yüklendiğinde ilk ay görünümünü ayarla
+    updateMonthView(); // DOMContentLoaded dışına çıkarın
 
     function addHabit() {
         const habitName = habitInput.value.trim();
