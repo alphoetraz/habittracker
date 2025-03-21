@@ -273,6 +273,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             habitsContainer.appendChild(habitItem);
         });
+        createPieChart(habits);
     }
 
     function toggleHabit(id) {
@@ -360,6 +361,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Stats Section Visibility
         document.getElementById("statsSection").style.display =
             filteredHabits.length > 0 ? "block" : "none";
+
+        createPieChart(habits);
     }
 
     function saveHabits() {
@@ -420,6 +423,56 @@ document.addEventListener("DOMContentLoaded", () => {
     renderHabits();
     updateStats();
 
+
+
+    function createPieChart(habits) {
+        const filteredHabits = habits.filter(habit => habit.view === activeView);
+        
+        // Süre bilgilerini toplama
+        const durations = filteredHabits.map(habit => {
+            const [startHour, startMin] = habit.startTime.split(':').map(Number);
+            const [endHour, endMin] = habit.endTime.split(':').map(Number);
+            
+            // Dakika cinsinden süre hesaplama
+            const duration = (endHour * 60 + endMin) - (startHour * 60 + startMin);
+            return {
+                text: habit.text,
+                duration: duration
+            };
+        });
+    
+        // Chart.js konfigürasyonu
+        const ctx = document.getElementById('completionChart');
+        if (ctx) {
+            // Önceki chart varsa yok et
+            if (window.habitPieChart instanceof Chart) {
+                window.habitPieChart.destroy();
+            }
+    
+            window.habitPieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: durations.map(d => d.text),
+                    datasets: [{
+                        data: durations.map(d => d.duration),
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', 
+                            '#4BC0C0', '#9966FF', '#FF9F40'
+                        ]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Habit Durations'
+                        }
+                    }
+                }
+            });
+        }
+    }
     // ========== DARK MODE TOGGLE ========== //
     const themeToggleBtn = document.getElementById("themeToggleBtn");
     if (themeToggleBtn) {
